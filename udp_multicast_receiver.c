@@ -24,6 +24,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+// Global main loop for signal handling
+static GMainLoop *global_main_loop = NULL;
+
 typedef struct {
     GstElement *pipeline;
     GstElement *source;
@@ -123,6 +126,9 @@ static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data) {
 
 static void signal_handler(int sig) {
     g_print("\n🛑 Received signal %d, leaving multicast group...\n", sig);
+    if (global_main_loop) {
+        g_main_loop_quit(global_main_loop);
+    }
 }
 
 static gboolean setup_pipeline(UDPMulticastReceiverData *data) {
@@ -357,6 +363,7 @@ int main(int argc, char *argv[]) {
     
     // Create main loop
     data.loop = g_main_loop_new(NULL, FALSE);
+    global_main_loop = data.loop;  // Set global reference for signal handler
     
     // Start playing
     g_print("▶️  Starting multicast receiver...\n");

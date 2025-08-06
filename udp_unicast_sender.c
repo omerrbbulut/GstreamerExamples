@@ -33,6 +33,7 @@ typedef struct {
 } UDPSenderData;
 
 static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data) {
+    (void)bus; // Suppress unused parameter warning
     UDPSenderData *sender_data = (UDPSenderData*)data;
     
     switch (GST_MESSAGE_TYPE(msg)) {
@@ -241,7 +242,7 @@ int main(int argc, char *argv[]) {
             data.use_camera = TRUE;
             arg_index++;
         } else if (strcmp(argv[arg_index], "-h") == 0 || strcmp(argv[arg_index], "--help") == 0) {
-            print_usage(argv[0]);
+            print_usage("udp_unicast_sender");
             return 0;
         } else {
             break;  // Non-option argument found

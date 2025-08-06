@@ -34,6 +34,7 @@ typedef struct {
 } UDPReceiverData;
 
 static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data) {
+    (void)bus; // Suppress unused parameter warning
     UDPReceiverData *receiver_data = (UDPReceiverData*)data;
     
     switch (GST_MESSAGE_TYPE(msg)) {
@@ -256,7 +257,7 @@ int main(int argc, char *argv[]) {
             data.output_file = argv[++arg_index];
             arg_index++;
         } else if (strcmp(argv[arg_index], "-h") == 0 || strcmp(argv[arg_index], "--help") == 0) {
-            print_usage(argv[0]);
+            print_usage("udp_unicast_receiver");
             return 0;
         } else {
             break;  // Non-option argument found

@@ -13,6 +13,7 @@
  * Compile: gcc -o udp_multicast_receiver udp_multicast_receiver.c `pkg-config --cflags --libs gstreamer-1.0`
  */
 
+#define _GNU_SOURCE
 #include <gst/gst.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,6 +21,8 @@
 #include <signal.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 
 typedef struct {
     GstElement *pipeline;
@@ -49,6 +52,7 @@ static gboolean is_multicast_address(const char *address) {
 }
 
 static gboolean bus_call(GstBus *bus, GstMessage *msg, gpointer data) {
+    (void)bus; // Suppress unused parameter warning
     UDPMulticastReceiverData *receiver_data = (UDPMulticastReceiverData*)data;
     
     switch (GST_MESSAGE_TYPE(msg)) {
@@ -295,7 +299,7 @@ int main(int argc, char *argv[]) {
             data.output_file = argv[++arg_index];
             arg_index++;
         } else if (strcmp(argv[arg_index], "-h") == 0 || strcmp(argv[arg_index], "--help") == 0) {
-            print_usage(argv[0]);
+            print_usage("udp_multicast_receiver");
             return 0;
         } else {
             break;  // Non-option argument found
